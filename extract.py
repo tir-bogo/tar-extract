@@ -16,7 +16,7 @@ class Extract:
     This class takes care of extracting files
     """
 
-    file_extensions = ('.tar', '.tgz', '.tbz', '.tb2')
+    file_extensions = ('.tar', '.tgz', '.tbz', '.tb2', '.tar.gz')
 
     @staticmethod
     def make_unique_directory_name(directorypath):
@@ -116,9 +116,6 @@ class Extract:
             extract_to(str):    Path to extract to, default is the folder where it is located
             create_dir(bool):   Creating directory with filename as directory name
             delete(bool):       Delete file after extracting
-
-        Returns:
-            str: Folder where files are extracted to
         """
         try:
             filepath = Path(filepath)
@@ -144,7 +141,6 @@ class Extract:
             if delete:
                 Path(filepath).unlink()
                 print("Deleted file '%s'" % filepath)
-            return extract_to
 
         except OSError as exc:
             print("Error while extracting file '%s'" % filepath)
@@ -167,15 +163,15 @@ class Extract:
         for filepath in files:
             extension = filepath.suffix
             filepath = filepath.as_posix()
-            new_dir = None
+
             if extension.lower() in Extract.file_extensions:
                 new_dir = Extract.tar(filepath, create_dir=create_dir, delete=delete)
 
-            elif extension.lower() == '.gz':
-                new_dir = Extract.gz(filepath, create_dir=gz_create_dir, delete=delete)
+                if new_dir is not None:
+                    Extract.walk_tree_and_extract(new_dir)
 
-            if new_dir is not None:
-                Extract.walk_tree_and_extract(new_dir)
+            elif extension.lower() == '.gz':
+                Extract.gz(filepath, create_dir=gz_create_dir, delete=delete)
 
     @staticmethod
     def extract(filepath, extract_to=None, recursive=True, delete=True,
@@ -192,15 +188,16 @@ class Extract:
             gz_create_dir(bool): Create directory for gz files (takes effect if recursive is true)
         """
         ext = Path(filepath).suffix
+        multi_ext = ''.join(Path(filepath).suffixes)
         new_dir = None
 
-        if ext in Extract.file_extensions:
+        if ext in Extract.file_extensions or multi_ext in Extract.file_extensions:
             new_dir = Extract.tar(filepath, extract_to=extract_to,
                                   create_dir=True, delete=False)
 
         elif ext == '.gz':
-            new_dir = Extract.gz(filepath, extract_to=extract_to,
-                                 create_dir=True, delete=False)
+            Extract.gz(filepath, extract_to=extract_to,
+                       create_dir=True, delete=False)
 
         else:
             print("Not valid file extension '%s'" % ext)
