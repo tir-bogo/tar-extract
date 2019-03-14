@@ -1,27 +1,28 @@
 # Extract recursively
 Module to extract tar/gzip files recursively
 
-#### Using
+### Using
 
-Extract tar, tgz, tbz, tb2 file
+#### Extract tar, tgz, tbz, tb2 file
 ```python
 filepath = "/home/test.tar"
 Extract.tar(filepath)
 ```
 
-Extract gz
+#### Extract gz
 ```python
 filepath = "/home/test.gz"
 Extract.gz(filepath)
 ```
 
-Extract recursively or unkown file (read code ducmentation for special setup) 
+#### Extract recursively or unkown file (read code ducmentation for special setup) 
 ```python
 filepath = "/home/test.tgz"
 Extract.extract(filepath)
 ```
 
-Make unique directory path
+#### Make unique directory path
+
 Dictories in home directory
 ```
 /home/test
